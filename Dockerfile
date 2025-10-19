@@ -1,11 +1,15 @@
 FROM python:3.13-slim
 
-RUN apt-get update
-RUN apt-get install ffmpeg -y
-RUN pip install torch torchvision fastapi uvicorn
+RUN apt-get update && apt-get install -y curl ffmpeg && rm -rf /var/lib/apt/lists/*
+
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+ENV PATH="/root/.local/bin:$PATH"
+
 WORKDIR /app
 ADD . .
+RUN uv sync --frozen --no-cache
 
 EXPOSE 8000
 
-CMD ["python", "app/main.py"]
+CMD ["uv", "run", "python", "app/main.py"]
