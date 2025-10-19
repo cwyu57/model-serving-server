@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -r
 
 WORKDIR /app
 COPY --from=builder /app/.venv/lib/python3.13/site-packages/ /usr/local/lib/python3.13/site-packages/
-COPY . .
+COPY ./app .
 
 EXPOSE 8000
 
-CMD ["python", "app/main.py"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
