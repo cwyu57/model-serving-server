@@ -15,6 +15,15 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Pre-commit hooks
+.pre-commit-config.yaml
+
+# Ruff
+.ruff_cache/
+
+# Mypy
+.mypy_cache/
+
 # Dockerfile
 Dockerfile
 .dockerignore
