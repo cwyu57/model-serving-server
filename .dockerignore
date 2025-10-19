@@ -1,0 +1,20 @@
+# Git
+.git
+.gitignore
+
+# Environments
+.env
+.venv
+
+# macOS
+.DS_Store
+
+# Cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Dockerfile
+Dockerfile
+.dockerignore
