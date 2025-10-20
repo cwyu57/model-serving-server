@@ -1,3 +1,5 @@
+from sqlalchemy import update
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from app.models import Model, Usage
@@ -8,19 +10,21 @@ class ModelRepository:
         self.session = session
 
     def execute_ocr(self, model_name: str) -> None:
-        model = self.session.query(Model).filter(Model.model_name == model_name).first()
-        if not model:
-            model = Model(model_name=model_name)
-            self.session.add(model)
-            self.session.commit()
-            self.session.refresh(model)
+        with self.session.begin():
+            stmt = (
+                insert(Model)
+                .values(model_name=model_name, usage_count=1)
+                .on_conflict_do_update(
+                    index_elements=["model_name"],
+                    set_={"usage_count": Model.usage_count + 1},
+                )
+                .returning(Model.id)
+            )
+            result = self.session.execute(stmt)
+            model_id = result.scalar_one()
 
-        usage = Usage(model_id=model.id)
-        self.session.add(usage)
-        self.session.commit()
-
-        model.usage_count += 1
-        self.session.commit()
+            usage = Usage(model_id=model_id)
+            self.session.add(usage)
 
     def get_all(self) -> list[Model]:
         return self.session.query(Model).all()
