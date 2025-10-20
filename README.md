@@ -69,6 +69,7 @@ This will create a virtual environment and install all dependencies defined in `
 ### 3. Set Up Environment Variables
 
 Create a `.env` file in the project root:
+or just `cp .env.example .env`
 
 ```bash
 # Environment
@@ -77,8 +78,8 @@ ENVIRONMENT=development
 # PostgreSQL Configuration
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
-POSTGRES_DB=model_serving
 POSTGRES_HOST=localhost
+POSTGRES_DB=model_serving
 POSTGRES_PORT=5432
 ENABLE_SQL_ECHO=true
 
