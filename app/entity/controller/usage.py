@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 
-class ModelUsage(BaseModel):
+class ModelUsageResponse(BaseModel):
     model_name: str = Field(
         description="Name of the model",
         examples=["tesseract-v1"],
@@ -11,7 +11,7 @@ class ModelUsage(BaseModel):
     usages: list[datetime] = Field(description="List of timestamps when the model was used")
 
 
-class ModelUsageCount(BaseModel):
+class ModelUsageCountResponse(BaseModel):
     model_name: str = Field(
         description="Name of the model",
         examples=["tesseract-v1"],

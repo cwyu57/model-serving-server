@@ -3,7 +3,7 @@ import os
 from collections.abc import Generator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 # Configure logging
 logging.basicConfig()
@@ -38,12 +38,11 @@ ENABLE_SQL_ECHO = os.getenv("ENABLE_SQL_ECHO", "false").lower() == "true"
 
 engine = create_engine(DATABASE_URL, echo=ENABLE_SQL_ECHO)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
 
-def get_db() -> Generator[Session]:
-    db = SessionLocal()
+def get_session_generator() -> Generator[Session]:
+    session = SessionLocal()
     try:
-        yield db
+        yield session
     finally:
-        db.close()
+        session.close()

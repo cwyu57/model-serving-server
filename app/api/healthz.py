@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 
-from app.entity.healthz import HealthResponse
+from app.entity.controller.healthz import HealthResponse
 
 router = APIRouter()
 

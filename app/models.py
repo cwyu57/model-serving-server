@@ -17,7 +17,7 @@ class Base(DeclarativeBase):
     pass
 
 
-class Models(Base):
+class Model(Base):
     __tablename__ = "models"
     __table_args__ = (
         PrimaryKeyConstraint("id", name="models_pkey"),
@@ -45,4 +45,4 @@ class Usage(Base):
     used_at: Mapped[datetime.datetime] = mapped_column(DateTime, server_default=text("now()"))
     model_id: Mapped[int | None] = mapped_column(Integer)
 
-    model: Mapped[Optional["Models"]] = relationship("Models", back_populates="usage")
+    model: Mapped[Optional["Model"]] = relationship("Models", back_populates="usage")

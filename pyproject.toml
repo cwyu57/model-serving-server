@@ -36,7 +36,13 @@ select = [
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
 ]
-ignore = []
+ignore = [
+    "D104",  # Missing docstring in public package
+    "F401",  # Unused import (allow re-exports without __all__)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py files for re-exports
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]

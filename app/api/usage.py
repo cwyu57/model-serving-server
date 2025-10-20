@@ -1,46 +1,41 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 
-from app.core.database import get_db
-from app.entity.usage import ModelUsage, ModelUsageCount
-from app.models import Models, Usage
+from app.entity.controller.usage import ModelUsageCountResponse, ModelUsageResponse
+from app.use_case.usage import UsageUseCase, get_usage_use_case
 
 router = APIRouter()
 
 
 @router.get(
     "/usage",
-    response_model=list[ModelUsage],
+    response_model=list[ModelUsageResponse],
     summary="Get Usage Logs",
     description="Retrieve detailed usage logs for all models with timestamps",
     tags=["Usage"],
 )
-def get_usage(db: Annotated[Session, Depends(get_db)]) -> list[ModelUsage]:
-    models = db.query(Models).all()
-    result = []
-    for model in models:
-        usages = db.query(Usage).filter(Usage.model_id == model.id).all()
-        result.append(
-            {"model_name": model.model_name, "usages": [usage.used_at for usage in usages]}
-        )
+def get_usage(
+    usage_use_case: Annotated[UsageUseCase, Depends(get_usage_use_case)],
+) -> list[ModelUsageResponse]:
+    outputs = usage_use_case.get_all_model_usages()
     return [
-        ModelUsage(model_name=model.model_name, usages=[usage.used_at for usage in usages])
-        for model in models
+        ModelUsageResponse(model_name=output.model_name, usages=output.usages) for output in outputs
     ]
 
 
 @router.get(
     "/models_usage",
-    response_model=list[ModelUsageCount],
+    response_model=list[ModelUsageCountResponse],
     summary="Get Model Usage Counts",
     description="Retrieve usage counts for all models",
     tags=["Usage"],
 )
-def get_models_usage(db: Annotated[Session, Depends(get_db)]) -> list[ModelUsageCount]:
-    models = db.query(Models).all()
-    result = []
-    for model in models:
-        result.append(ModelUsageCount(model_name=model.model_name, usage_count=model.usage_count))
-    return result
+def get_models_usage(
+    usage_use_case: Annotated[UsageUseCase, Depends(get_usage_use_case)],
+) -> list[ModelUsageCountResponse]:
+    outputs = usage_use_case.get_all_model_usage_counts()
+    return [
+        ModelUsageCountResponse(model_name=output.model_name, usage_count=output.usage_count)
+        for output in outputs
+    ]
