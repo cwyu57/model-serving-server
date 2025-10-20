@@ -1,5 +1,16 @@
 set dotenv-load
 
+infra-up:
+    docker compose up -d postgres localstack
+    @echo "Waiting for services to be healthy..."
+    @docker compose ps postgres localstack
+
+infra-down:
+    docker compose down postgres localstack
+
+infra-logs:
+    docker compose logs -f postgres localstack
+
 pg-up:
     docker compose up -d postgres
 
@@ -9,6 +20,12 @@ pg-down:
 pg-logs:
     docker compose logs -f postgres
 
+local:
+    @echo "Starting local development server..."
+    @echo "Make sure infrastructure is running: just infra-up"
+    uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Run entire app stack in Docker (app + infrastructure)
 dev:
     docker compose up app --build
 

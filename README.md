@@ -80,6 +80,7 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_DB=model_serving
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
+ENABLE_SQL_ECHO=true
 
 # AWS Configuration (LocalStack)
 AWS_ENDPOINT_URL=http://localhost:4566
@@ -93,13 +94,13 @@ AWS_SECRET_ACCESS_KEY=test
 Start PostgreSQL and LocalStack containers:
 
 ```bash
-just pg-up
+just infra-up
 ```
 
-Wait a few seconds for the services to be healthy. You can check the logs with:
+This will start both PostgreSQL and LocalStack in the background. Wait a few seconds for the services to be healthy. You can check the logs with:
 
 ```bash
-just pg-logs
+just infra-logs
 ```
 
 ### 5. Run Database Migrations
@@ -112,16 +113,22 @@ just migrate
 
 ### 6. Start the Development Server
 
-You can run the application in two ways:
+You can run the application in different ways:
 
-**Option A: Using Docker Compose (Recommended)**
+**Option A: Local Development (Recommended for development)**
+
+Run the app locally while connecting to Docker infrastructure:
 ```bash
-just dev
+just local
 ```
 
-**Option B: Local Python**
+This runs the Python app on your local machine (with hot reload) while connecting to PostgreSQL and LocalStack running in Docker containers.
+
+**Option B: Full Docker Stack**
+
+Run everything in Docker (app + infrastructure):
 ```bash
-uv run uvicorn app.main:app --reload
+just dev
 ```
 
 ### 7. Verify Installation
@@ -136,10 +143,15 @@ Open your browser and navigate to:
 The project uses `just` as a task runner. Here are the most common commands:
 
 ```bash
-# Database Management
-just pg-up           # Start PostgreSQL
-just pg-down         # Stop PostgreSQL
-just pg-logs         # View PostgreSQL logs
+# Infrastructure Management
+just infra-up        # Start infrastructure (PostgreSQL + LocalStack)
+just infra-down      # Stop infrastructure
+just infra-logs      # View infrastructure logs
+
+# Database Management (individual services)
+just pg-up           # Start PostgreSQL only
+just pg-down         # Stop PostgreSQL only
+just pg-logs         # View PostgreSQL logs only
 
 # Migrations
 just migrate         # Apply migrations
@@ -150,7 +162,8 @@ just migrate-history # Show migration history
 just codegen-models  # Generate SQLAlchemy models from database
 
 # Development
-just dev             # Run app with Docker Compose
+just local           # Run app locally (connects to Docker infrastructure)
+just dev             # Run entire app stack in Docker
 ```
 
 ## Development Tools
