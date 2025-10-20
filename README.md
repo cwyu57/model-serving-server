@@ -31,6 +31,16 @@ Before you begin, ensure you have the following installed on your macOS system:
    - `just` - Command runner for project tasks
    - `gum` - Tool for glamorous shell scripts (used in migrations)
 
+   **Optional: Enable `just` auto-completion for zsh**
+
+   Add the following to your `~/.zshrc`:
+   ```bash
+   fpath+=($(brew --prefix)/share/zsh/site-functions)
+   autoload -Uz compinit
+   compinit
+   ```
+   Then reload your shell: `source ~/.zshrc`
+
 3. **Docker Desktop** - For running PostgreSQL and LocalStack
 
    Download and install from [docker.com](https://www.docker.com/products/docker-desktop/)
