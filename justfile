@@ -1,3 +1,5 @@
+set dotenv-load
+
 pg-up:
     docker compose up -d postgres
 
