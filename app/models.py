@@ -27,10 +27,8 @@ class Models(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     model_name: Mapped[str] = mapped_column(String)
-    usage_count: Mapped[int | None] = mapped_column(Integer, server_default=text("0"))
-    created_at: Mapped[datetime.datetime | None] = mapped_column(
-        DateTime, server_default=text("now()")
-    )
+    usage_count: Mapped[int] = mapped_column(Integer, server_default=text("0"))
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime, server_default=text("now()"))
 
     usage: Mapped[list["Usage"]] = relationship("Usage", back_populates="model")
 
@@ -44,9 +42,7 @@ class Usage(Base):
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    used_at: Mapped[datetime.datetime] = mapped_column(DateTime, server_default=text("now()"))
     model_id: Mapped[int | None] = mapped_column(Integer)
-    used_at: Mapped[datetime.datetime | None] = mapped_column(
-        DateTime, server_default=text("now()")
-    )
 
     model: Mapped[Optional["Models"]] = relationship("Models", back_populates="usage")

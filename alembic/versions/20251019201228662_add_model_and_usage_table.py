@@ -26,8 +26,8 @@ def upgrade() -> None:
         "models",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("model_name", sa.String(), nullable=False),
-        sa.Column("usage_count", sa.Integer(), nullable=True, server_default="0"),
-        sa.Column("created_at", sa.DateTime(), nullable=True, server_default=sa.func.now()),
+        sa.Column("usage_count", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column("created_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(op.f("ix_models_id"), "models", ["id"], unique=False)
@@ -38,7 +38,7 @@ def upgrade() -> None:
         "usage",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("model_id", sa.Integer(), nullable=True),
-        sa.Column("used_at", sa.DateTime(), nullable=True, server_default=sa.func.now()),
+        sa.Column("used_at", sa.DateTime(), nullable=False, server_default=sa.func.now()),
         sa.ForeignKeyConstraint(["model_id"], ["models.id"]),
         sa.PrimaryKeyConstraint("id"),
     )
