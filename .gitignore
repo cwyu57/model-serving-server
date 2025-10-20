@@ -3,6 +3,7 @@ __pycache__/
 
 # Environments
 .env
+.envrc
 .venv
 
 # macOS

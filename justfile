@@ -24,11 +24,7 @@ migrate-history:
 
 codegen-models:
     #!/usr/bin/env bash
-    # Generate SQLAlchemy models from database schema
-    # Usage: just codegen-models [output_file]
-    # Default output: app/models.py
-    OUTPUT_FILE="${1:-app/models.py}"
-    DB_URL="${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/model_serving}"
-    echo "Generating models from database: ${DB_URL}"
-    uv run sqlacodegen "${DB_URL}" --outfile "${OUTPUT_FILE}"
+    OUTPUT_FILE="${1:-app/models.py}"kk
+    echo "Generating models from database: ${DATABASE_URL}"
+    uv run sqlacodegen "${DATABASE_URL}" --outfile "${OUTPUT_FILE}"
     echo "Models generated to: ${OUTPUT_FILE}"
