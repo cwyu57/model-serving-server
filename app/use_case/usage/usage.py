@@ -10,17 +10,15 @@ class UsageUseCase:
 
     def get_all_model_usages(self) -> list[ModelUsageOutput]:
         """
-        Get detailed usage logs for all models with timestamps
+        Get detailed usage logs for all models with timestamps.
+        Uses a single JOIN query to avoid N+1 problem.
         """
-        models = self.model_repository.get_all()
+        models = self.model_repository.get_all_with_usages()
 
         return [
             ModelUsageOutput(
                 model_name=model.model_name,
-                usages=[
-                    usage.used_at
-                    for usage in self.usage_repository.get_usages_by_model_id(model.id)
-                ],
+                usages=[usage.used_at for usage in model.usage],
             )
             for model in models
         ]

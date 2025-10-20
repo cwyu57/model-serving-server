@@ -1,6 +1,6 @@
 from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.models import Model, Usage
 
@@ -28,3 +28,10 @@ class ModelRepository:
 
     def get_all(self) -> list[Model]:
         return self.session.query(Model).all()
+
+    def get_all_with_usages(self) -> list[Model]:
+        """
+        Get all models with their usage records using a single JOIN query.
+        Avoids N+1 query problem by eagerly loading the usage relationship.
+        """
+        return self.session.query(Model).options(joinedload(Model.usage)).all()
