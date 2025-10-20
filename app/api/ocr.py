@@ -16,9 +16,11 @@ router = APIRouter()
     description="Process an image using the specified OCR model and track usage",
     tags=["OCR"],
 )
-def run_ocr(
+async def run_ocr(
     request: OCRRequest,
     ocr_use_case: Annotated[OCRUseCase, Depends(get_ocr_use_case)],
 ) -> OCRResponse:
-    output = ocr_use_case.execute(OCRInput(image=request.image, model_name=request.model_name))
+    output = await ocr_use_case.execute(
+        OCRInput(image=request.image, model_name=request.model_name)
+    )
     return OCRResponse(result=output.result)

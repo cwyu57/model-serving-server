@@ -1,9 +1,13 @@
 import logging
 import os
-from collections.abc import Generator
+from collections.abc import AsyncGenerator
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 # Configure logging
 logging.basicConfig()
@@ -28,21 +32,21 @@ missing_vars = [var for var, value in required_vars.items() if value is None]
 if missing_vars:
     raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
+# Use asyncpg driver for async support
 DATABASE_URL = (
-    f"postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@"
+    f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@"
     f"{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 )
 
 # Enable SQL logging
 ENABLE_SQL_ECHO = os.getenv("ENABLE_SQL_ECHO", "false").lower() == "true"
 
-engine = create_engine(DATABASE_URL, echo=ENABLE_SQL_ECHO)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine: AsyncEngine = create_async_engine(DATABASE_URL, echo=ENABLE_SQL_ECHO)
+AsyncSessionLocal = async_sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False, autocommit=False, autoflush=False
+)
 
 
-def get_session_generator() -> Generator[Session]:
-    session = SessionLocal()
-    try:
+async def get_async_session() -> AsyncGenerator[AsyncSession]:
+    async with AsyncSessionLocal() as session:
         yield session
-    finally:
-        session.close()

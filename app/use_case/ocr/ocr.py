@@ -7,7 +7,7 @@ class OCRUseCase:
     def __init__(self, model_repository: ModelRepository):
         self.model_repository = model_repository
 
-    def execute(self, request: OCRInput) -> OCROutput:
+    async def execute(self, request: OCRInput) -> OCROutput:
         """
         Execute OCR use case:
         1. Get or create the model
@@ -15,7 +15,7 @@ class OCRUseCase:
         3. Increment usage count
         4. Perform OCR
         """
-        self.model_repository.execute_ocr(request.model_name)
+        await self.model_repository.execute_ocr(request.model_name)
         ocr_result = fake_ocr(request.image)
 
         return OCROutput(result=ocr_result)

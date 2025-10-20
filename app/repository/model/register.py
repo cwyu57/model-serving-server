@@ -1,13 +1,13 @@
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_session_generator
+from app.core.database import get_async_session
 from app.repository.model.model import ModelRepository
 
 
 def get_model_repository(
-    session: Annotated[Session, Depends(get_session_generator)],
+    session: Annotated[AsyncSession, Depends(get_async_session)],
 ) -> ModelRepository:
     return ModelRepository(session)
