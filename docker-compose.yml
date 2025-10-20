@@ -17,6 +17,29 @@ services:
       timeout: 5s
       retries: 5
 
+  localstack:
+    image: localstack/localstack:latest
+    container_name: model-serving-localstack
+    restart: unless-stopped
+    ports:
+      - "4566:4566"            # LocalStack Gateway
+      - "4510-4559:4510-4559"  # External services port range
+    environment:
+      - SERVICES=sqs
+      - DEBUG=1
+      - PERSISTENCE=1
+      - AWS_DEFAULT_REGION=us-east-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./script/localstack-init:/etc/localstack/init/ready.d"
+    healthcheck:
+      test: ["CMD", "awslocal", "sqs", "list-queues"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     build: .
     container_name: model-serving-app
@@ -30,10 +53,18 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: postgres # in docker-compose environment, the service name is used as the host
       POSTGRES_PORT: ${POSTGRES_PORT}
+      AWS_ENDPOINT_URL: ${AWS_ENDPOINT_URL}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     depends_on:
       postgres:
+        condition: service_healthy
+      localstack:
         condition: service_healthy
 
 volumes:
   postgres_data:
+    driver: local
+  localstack_data:
     driver: local
