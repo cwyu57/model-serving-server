@@ -45,4 +45,4 @@ class Usage(Base):
     used_at: Mapped[datetime.datetime] = mapped_column(DateTime, server_default=text("now()"))
     model_id: Mapped[int | None] = mapped_column(Integer)
 
-    model: Mapped[Optional["Model"]] = relationship("Models", back_populates="usage")
+    model: Mapped[Optional["Model"]] = relationship("Model", back_populates="usage")
