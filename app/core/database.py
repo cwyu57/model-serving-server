@@ -1,8 +1,13 @@
+import logging
 import os
 from collections.abc import Generator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
+# Configure logging
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
 # Build DATABASE_URL from individual environment variables
 POSTGRES_USER = os.getenv("POSTGRES_USER")
@@ -28,7 +33,10 @@ DATABASE_URL = (
     f"{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 )
 
-engine = create_engine(DATABASE_URL)
+# Enable SQL logging
+ENABLE_SQL_ECHO = os.getenv("ENABLE_SQL_ECHO", "false").lower() == "true"
+
+engine = create_engine(DATABASE_URL, echo=ENABLE_SQL_ECHO)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
