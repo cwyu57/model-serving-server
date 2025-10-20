@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from app.models import Model, Usage
+from app.models import Models, Usage
 
 
 class ModelRepository:
@@ -13,13 +13,13 @@ class ModelRepository:
     async def execute_ocr(self, model_name: str) -> None:
         async with self.session.begin():
             stmt = (
-                insert(Model)
+                insert(Models)
                 .values(model_name=model_name, usage_count=1)
                 .on_conflict_do_update(
                     index_elements=["model_name"],
-                    set_={"usage_count": Model.usage_count + 1},
+                    set_={"usage_count": Models.usage_count + 1},
                 )
-                .returning(Model.id)
+                .returning(Models.id)
             )
             result = await self.session.execute(stmt)
             model_id = result.scalar_one()
@@ -27,15 +27,15 @@ class ModelRepository:
             usage = Usage(model_id=model_id)
             self.session.add(usage)
 
-    async def get_all(self) -> list[Model]:
-        result = await self.session.execute(select(Model))
+    async def get_all(self) -> list[Models]:
+        result = await self.session.execute(select(Models))
         return list(result.scalars().all())
 
-    async def get_all_with_usages(self) -> list[Model]:
+    async def get_all_with_usages(self) -> list[Models]:
         """
         Get all models with their usage records using a single JOIN query.
         Avoids N+1 query problem by eagerly loading the usage relationship.
         """
-        stmt = select(Model).options(joinedload(Model.usage))
+        stmt = select(Models).options(joinedload(Models.usage))
         result = await self.session.execute(stmt)
         return list(result.unique().scalars().all())
