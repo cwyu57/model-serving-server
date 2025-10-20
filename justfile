@@ -2,7 +2,7 @@ build-dev:
     docker build -t model-serving-server .
 
 dev:
-    docker run -p 8000:8000 model-serving-server
+    docker run -p 8000:8000 --env-file .env model-serving-server
 
 migrate:
     uv run alembic upgrade head
@@ -24,7 +24,7 @@ migrate-history:
 
 codegen-models:
     #!/usr/bin/env bash
-    OUTPUT_FILE="${1:-app/models.py}"kk
+    OUTPUT_FILE="${1:-app/models.py}"
     echo "Generating models from database: ${DATABASE_URL}"
     uv run sqlacodegen "${DATABASE_URL}" --outfile "${OUTPUT_FILE}"
     echo "Models generated to: ${OUTPUT_FILE}"
