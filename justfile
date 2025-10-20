@@ -1,8 +1,14 @@
-build-dev:
-    docker build -t model-serving-server .
+pg-up:
+    docker compose up -d postgres
+
+pg-down:
+    docker compose down postgres
+
+pg-logs:
+    docker compose logs -f postgres
 
 dev:
-    docker run -p 8000:8000 --env-file .env model-serving-server
+    docker compose up app
 
 migrate:
     uv run alembic upgrade head
