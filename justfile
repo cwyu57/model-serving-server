@@ -8,7 +8,7 @@ pg-logs:
     docker compose logs -f postgres
 
 dev:
-    docker compose up app
+    docker compose up app --build
 
 migrate:
     uv run alembic upgrade head
@@ -31,6 +31,12 @@ migrate-history:
 codegen-models:
     #!/usr/bin/env bash
     OUTPUT_FILE="${1:-app/models.py}"
+    : "${POSTGRES_USER:?POSTGRES_USER is not set}"
+    : "${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set}"
+    : "${POSTGRES_DB:?POSTGRES_DB is not set}"
+    : "${POSTGRES_HOST:?POSTGRES_HOST is not set}"
+    : "${POSTGRES_PORT:?POSTGRES_PORT is not set}"
+    DATABASE_URL="postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
     echo "Generating models from database: ${DATABASE_URL}"
     uv run sqlacodegen "${DATABASE_URL}" --outfile "${OUTPUT_FILE}"
     echo "Models generated to: ${OUTPUT_FILE}"

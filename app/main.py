@@ -7,7 +7,7 @@ from fastapi import Depends, FastAPI, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.database import SessionLocal
+from app.core.database import SessionLocal
 from app.models import Models as Model
 from app.models import Usage
 
